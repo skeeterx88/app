@@ -1,33 +1,21 @@
 pipeline {
-    agent { label 'master' }
+    agent any
+
     stages {
-        stage('Build do pacote') {
-            agent { docker { image 'maven:3.3.3' } }
+        stage('Build') {
             steps {
-                sh 'mvn -B -DskipTests clean install'
+                echo 'Building..'
             }
         }
-        stage('Teste do código') {
-            agent { docker { image 'maven:3.3.3' } }
+        stage('Test') {
             steps {
-                sh 'mvn test'
-            }
-            post {
-                always {
-                    junit 'target/surefire-reports/*.xml' 
-                }
-            }
-        }    
-        stage('Criando novo servidor na AWS') {
-            steps {
-                sh 'ansible-playbook -i inventory playbook.yml'
+                echo 'Testing..'
             }
         }
-        stage('Deploy do pacote no novo servidor') {
+        stage('Deploy') {
             steps {
-                sh 'ansible-playbook -i inventory_new playbook_new.yml'
+                echo 'Deploying....'
             }
         }
     }
 }
-
